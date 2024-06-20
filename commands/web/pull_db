@@ -1,0 +1,121 @@
+#!/bin/bash
+#ddev-generated
+# https://github.com/ddev/ddev-contrib/blob/master/custom-commands/dump-and-deploy-db/web/dump-db
+targetDir=$(dirname "$0")/targets
+commonDir=$(dirname "$0")/common
+source "${commonDir}/colors"
+
+function usage() {
+  # Set colors for section titles and targets
+  sectionColor="$CLR_GRN"
+  targetColor="$CLR_YEL"
+
+  # Usage section
+  printf "${sectionColor}Usage:${CLR_END}\n"
+  printf "\tddev dump-db [options] ‹target/source›\n"
+  printf "\n" # Add a line between sections
+
+  # Targets/Sources section
+  printf "${sectionColor}Targets/Sources:${CLR_END}\n"
+  printf "\t· ${targetColor}%s${CLR_END}\n" "ddev (the local ddev database)"
+
+  if [ -n "${targetDir}" ]; then
+    find "${targetDir}" -type f -not -name README.txt -not -name .gitignore -print0 \
+      | while IFS= read -r -d '' _i; do
+        printf "\t· ${targetColor}%s${CLR_END}\n" "$(basename "$_i")"
+      done
+  else
+    printf "\t${targetColor}No target directory specified${CLR_END}\n"
+  fi
+
+  printf "\n" # Add a line between sections
+
+  # Options section
+  printf "${sectionColor}Options:${CLR_END}\n"
+  printf "\t%-15s %s\n" "-y|--yes" "No question before data deletion"
+  printf "\t%-15s %s\n" "-c|--creative" "Use funny progress spinners"
+  printf "\t%-15s %s\n" "-v|--verbose" "Echo all executed commands"
+  printf "\n" # Add a line at the end
+}
+
+function parseArgs() {
+  # -allow a command to fail with !’s side effect on errexit
+  # -use return value from ${PIPESTATUS[0]}, because ! hosed $?
+  ! getopt --test > /dev/null
+  if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+    echo $CLR_RED'`getopt --test` failed in this environment.'$CLR_END
+    exit 1
+  fi
+
+  OPTIONS="ycv"
+  LONGOPTS="yes,creative,verbose"
+
+  # -regarding ! and PIPESTATUS see above
+  # -temporarily store output to be able to check for errors
+  # -activate quoting/enhanced mode (e.g. by writing out “--options”)
+  # -pass arguments only via   -- "$@"   to separate them correctly
+  ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+  if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    # e.g. return value is 1
+    #  then getopt has complained about wrong arguments to stdout
+    usage
+    exit 2
+  fi
+  # read getopt’s output this way to handle the quoting right:
+  eval set -- "$PARSED"
+
+  while true; do
+    case "$1" in
+      -y | --yes)
+        isForce=1
+        shift
+        ;;
+      -c | --creative)
+        isCreative=1
+        shift
+        ;;
+      -v | --verbose)
+        isVerbose=1
+        shift
+        ;;
+      --)
+        shift
+        break
+        ;;
+      *)
+        targetName="$1"
+        usage
+        exit 3
+        ;;
+    esac
+  done
+
+  # handle non-option arguments
+  if [[ $# -ne 1 ]]; then
+    usage
+    exit 4
+  fi
+  targetName="$1"
+
+  if [ "$targetName" == "ddev" ]; then
+    isDumpDdev=1
+  else
+    # read target config
+    if ! . "$targetDir"/"$targetName" 2> /dev/null; then
+      printf "\n${CLR_RED}ERROR: Target/source ‹$CLR_GREEN%s$CLR_RED› not found.$CLR_END\n" "$targetName"
+      printf "\n-----------\n\n"
+      usage
+      exit 3
+    fi
+  fi
+}
+
+# arguments
+isForce=0
+isVerbose=0
+isDumpDdev=0
+isCreative=0
+targetName=
+typeset -A target
+
+parseArgs "$@"
