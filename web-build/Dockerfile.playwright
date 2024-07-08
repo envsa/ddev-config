@@ -1,0 +1,10 @@
+#ddev-generated
+
+# switch to current user so playwright installs files in the right place
+USER $username
+
+# files will be output in /home/${username}/.cache
+RUN npx -y playwright install --with-deps --force
+
+# switch back to root user so ddev can continue with standard installation
+USER root

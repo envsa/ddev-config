@@ -13,8 +13,10 @@ setup() {
 
 health_checks() {
   # Do something useful here that verifies the add-on
-  # ddev exec "curl -s elasticsearch:9200" | grep "${PROJNAME}-elasticsearch"
-  ddev hello
+  # Check that port 3000 is exposed for vite
+  ddev describe -j | jq '.raw.services.web.exposed_ports' | grep 3000
+  # Check that there is an environmnet variable set for VITE_PORT
+  ddev exec env | grep "DDEV_VITE_PORT"
 }
 
 teardown() {
