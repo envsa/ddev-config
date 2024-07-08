@@ -13,10 +13,13 @@ setup() {
 
 health_checks() {
   # Do something useful here that verifies the add-on
-  # Check that port 3000 is exposed for vite
+  # Check that port 3000 is exposed for vite [✅]
   ddev describe -j | jq '.raw.services.web.exposed_ports' | grep 3000
-  # Check that there is an environmnet variable set for VITE_PORT
+  # Check that there is an environmnet variable set for VITE_PORT [✅]
   ddev exec env | grep "DDEV_VITE_PORT"
+  # Check that image magick has the correct resource allocation [❌]
+  # Check that playwright's dependencies have been installed [❌]
+  # Check that each command provides it's default output [❌]
 }
 
 teardown() {
@@ -38,7 +41,7 @@ teardown() {
 @test "install from release" {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
-  echo "# ddev get https://github.com/envsa/ddev-config with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  echo "# ddev get envsa/ddev-config with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
   ddev get envsa/ddev-config
   ddev restart >/dev/null
   health_checks
