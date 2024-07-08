@@ -39,7 +39,7 @@ teardown() {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
   echo "# ddev get https://github.com/envsa/ddev-config with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-  ddev get https://github.com/envsa/ddev-config
+  ddev get envsa/ddev-config
   ddev restart >/dev/null
   health_checks
 }
