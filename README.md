@@ -1,28 +1,18 @@
-[![tests](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-addon-template/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
+[![tests](https://github.com/envsa/ddev-config/actions/workflows/tests.yml/badge.svg)](https://github.com/envsa/ddev-config/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
 
-# ddev-addon-template <!-- omit in toc -->
+# ENVSA DDEV Config
 
-* [What is ddev-addon-template?](#what-is-ddev-addon-template)
-* [Components of the repository](#components-of-the-repository)
-* [Getting started](#getting-started)
-* [How to debug in Github Actions](#how-to-debug-tests-github-actions)
+This is a repository to quickstart out envsa ddev projects with some custom settings.
 
-## What is ddev-addon-template?
+## What is included
 
-This repository is a template for providing [DDEV](https://ddev.readthedocs.io) add-ons and services.
-
-In DDEV addons can be installed from the command line using the `ddev get` command, for example, `ddev get ddev/ddev-redis` or `ddev get ddev/ddev-solr`.
-
-This repository is a quick way to get started. You can create a new repo from this one by clicking the template button in the top right corner of the page.
-
-![template button](images/template-button.png)
-
-## Components of the repository
-
-* The fundamental contents of the add-on service or other component. For example, in this template there is a [docker-compose.addon-template.yaml](docker-compose.addon-template.yaml) file.
-* An [install.yaml](install.yaml) file that describes how to install the service or other component.
-* A test suite in [test.bats](tests/test.bats) that makes sure the service continues to work as expected.
-* [Github actions setup](.github/workflows/tests.yml) so that the tests run automatically when you push to the repository.
+- Install playwright dependencies in the web container
+- Expose a port for Vite's dev server
+  - Make this settable via an environment variable
+  - Default back to port 3000
+- Set a realistic disk limit of 8GiB for Image Magick
+- Add a set of useful scripts to handle databases in various environments
+- Provide a way to keep secrets secret
 
 ## Getting started
 
@@ -32,9 +22,9 @@ This repository is a quick way to get started. You can create a new repo from th
 4. Add the files that need to be added to a DDEV project to the repository. For example, you might replace `docker-compose.addon-template.yaml` with the `docker-compose.*.yaml` for your recipe.
 5. Update the `install.yaml` to give the necessary instructions for installing the add-on:
 
-   * The fundamental line is the `project_files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
-   * You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `.ddev` directory, `~/.ddev`.
-   * Finally, `pre_install_commands` and `post_install_commands` are supported. These can use the host-side environment variables documented [in DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/custom-commands/#environment-variables-provided).
+   - The fundamental line is the `project_files` directive, a list of files to be copied from this repo into the project `.ddev` directory.
+   - You can optionally add files to the `global_files` directive as well, which will cause files to be placed in the global `.ddev` directory, `~/.ddev`.
+   - Finally, `pre_install_commands` and `post_install_commands` are supported. These can use the host-side environment variables documented [in DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/custom-commands/#environment-variables-provided).
 
 6. Update `tests/test.bats` to provide a reasonable test for your repository. Tests are triggered either by manually executing `bats ./tests/test.bats`, automatically on every push to the repository, or periodically each night. Please make sure to attend to test failures when they happen. Others will be depending on you. Bats is a simple testing framework that just uses Bash. To run a Bats test locally, you have to [install bats-core](https://bats-core.readthedocs.io/en/stable/installation.html) first. Then you download your add-on, and finally run `bats ./tests/test.bats` within the root of the uncompressed directory. To learn more about Bats see the [documentation](https://bats-core.readthedocs.io/en/stable/).
 7. When everything is working, including the tests, you can push the repository to GitHub.
@@ -65,6 +55,7 @@ Host *.tmate.io
     IdentitiesOnly yes
     IdentityFile ~/.ssh/tmate_ed25519
 ```
+
 3. Go to `https://github.com/<user>/<repo>/actions/workflows/tests.yml`.
 
 4. Click the `Run workflow` button and you will have the option to select the branch to run the workflow from and activate `tmate` by checking the `Debug with tmate` checkbox for this run.
@@ -73,9 +64,9 @@ Host *.tmate.io
 
 5. After the `workflow_dispatch` event was triggered, click the `All workflows` link in the sidebar and then click the `tests` action in progress workflow.
 
-7. Pick one of the jobs in progress in the sidebar.
+6. Pick one of the jobs in progress in the sidebar.
 
-8. Wait until the current task list reaches the `tmate debugging session` section and the output shows something like:
+7. Wait until the current task list reaches the `tmate debugging session` section and the output shows something like:
 
 ```
 106 SSH: ssh PRbaS7SLVxbXImhjUqydQBgDL@nyc1.tmate.io
@@ -90,4 +81,4 @@ Host *.tmate.io
 
 For a more detailed documentation about `tmate` see [Debug your GitHub Actions by using tmate](https://mxschmitt.github.io/action-tmate/).
 
-**Contributed and maintained by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR)**
+**Contributed and maintained by [@rellafella](https://github.com/rellafella)**
