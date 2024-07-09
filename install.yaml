@@ -68,6 +68,7 @@ project_files:
 - commands/web/
 - web-build/
 - docker-compose.vite.yaml
+- apache/
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames
