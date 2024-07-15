@@ -1,0 +1,11 @@
+#ddev-generated
+override_config: false
+hooks:
+  post-import-db:
+    - exec: composer install
+    - exec: npm install
+    - exec: npm run build
+  post-start:
+    - exec: composer install
+    - exec: npm install
+    - exec: npm run build
