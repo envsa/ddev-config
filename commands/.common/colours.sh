@@ -1,4 +1,4 @@
-#!/bin/shell
+#!/bin/bash
 #ddev-generated
 
 # colours to include in echo -e "${CLR_GRN}Hello world!${CLR_END}"

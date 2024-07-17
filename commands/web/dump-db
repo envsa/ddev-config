@@ -1,14 +1,31 @@
 #!/bin/bash
 #ddev-generated
-# https://github.com/ddev/ddev-contrib/blob/master/custom-commands/dump-and-deploy-db/web/dump-db
-targetDir=$(dirname "$0")/targets
-commonDir=$(dirname "$0")/common
-source "${commonDir}/colors"
 
+## Description: dump mysql database on remote system table by table into /mnt/ddev_config/db-cache/(target)/(records|struct)/ directories
+## Usage: dump-db [options, call without params for help] ‹target/source›
+
+
+# =============================================================================
+# FUNCTIONS
+# =============================================================================
 function usage() {
   # Set colors for section titles and targets
-  sectionColor="$CLR_GRN"
-  targetColor="$CLR_YEL"
+  sectionColor="${CLR_GRN}"
+  targetColor="${CLR_YEL}"
+
+  # Files to ignore
+  ignore_files=("README.txt" ".gitignore" "example")
+
+  # Build the find command
+  find_cmd="find \"${TARGET_DIR}\" -type f"
+
+  # Add ignored files to find command
+  for file in "${ignore_files[@]}"; do
+    find_cmd+=" -not -name ${file}"
+  done
+
+  # Add -print0 to the find command
+  find_cmd+=" -print0"
 
   # Usage section
   printf "${sectionColor}Usage:${CLR_END}\n"
@@ -19,11 +36,10 @@ function usage() {
   printf "${sectionColor}Targets/Sources:${CLR_END}\n"
   printf "\t· ${targetColor}%s${CLR_END}\n" "ddev (the local ddev database)"
 
-  if [ -n "${targetDir}" ]; then
-    find "${targetDir}" -type f -not -name README.txt -not -name .gitignore -print0 \
-      | while IFS= read -r -d '' _i; do
-        printf "\t· ${targetColor}%s${CLR_END}\n" "$(basename "$_i")"
-      done
+  if [ -n "${TARGET_DIR}" ]; then
+    eval ${find_cmd} | while IFS= read -r -d '' _i; do
+      printf "\t· ${targetColor}%s${CLR_END}\n" "$(basename "$_i")"
+    done
   else
     printf "\t${targetColor}No target directory specified${CLR_END}\n"
   fi
@@ -32,8 +48,6 @@ function usage() {
 
   # Options section
   printf "${sectionColor}Options:${CLR_END}\n"
-  printf "\t%-15s %s\n" "-y|--yes" "No question before data deletion"
-  printf "\t%-15s %s\n" "-c|--creative" "Use funny progress spinners"
   printf "\t%-15s %s\n" "-v|--verbose" "Echo all executed commands"
   printf "\n" # Add a line at the end
 }
@@ -43,12 +57,12 @@ function parseArgs() {
   # -use return value from ${PIPESTATUS[0]}, because ! hosed $?
   ! getopt --test > /dev/null
   if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-    echo $CLR_RED'`getopt --test` failed in this environment.'$CLR_END
+    errorMessage "'getopt --test' failed in this environment."
     exit 1
   fi
 
-  OPTIONS="ycv"
-  LONGOPTS="yes,creative,verbose"
+  OPTIONS="nv"
+  LONGOPTS="verbose"
 
   # -regarding ! and PIPESTATUS see above
   # -temporarily store output to be able to check for errors
@@ -61,19 +75,12 @@ function parseArgs() {
     usage
     exit 2
   fi
+
   # read getopt’s output this way to handle the quoting right:
   eval set -- "$PARSED"
 
   while true; do
     case "$1" in
-      -y | --yes)
-        isForce=1
-        shift
-        ;;
-      -c | --creative)
-        isCreative=1
-        shift
-        ;;
       -v | --verbose)
         isVerbose=1
         shift
@@ -101,21 +108,37 @@ function parseArgs() {
     isDumpDdev=1
   else
     # read target config
-    if ! . "$targetDir"/"$targetName" 2> /dev/null; then
-      printf "\n${CLR_RED}ERROR: Target/source ‹$CLR_GREEN%s$CLR_RED› not found.$CLR_END\n" "$targetName"
-      printf "\n-----------\n\n"
+    if ! . "$TARGET_DIR$targetName" 2>/dev/null; then
+      errorMessage "Target/source ‹$targetName› not found."
       usage
       exit 3
     fi
   fi
 }
 
-# arguments
-isForce=0
+# =============================================================================
+# INIT
+# =============================================================================
+
+# set colours and some high level paths etc
+source "/mnt/ddev_config/commands/.common/init.sh"
+
+# set default args
 isVerbose=0
-isDumpDdev=0
-isCreative=0
 targetName=
 typeset -A target
 
+# parse args from command
 parseArgs "$@"
+
+# these files rely on the target being set so we delay them being included
+source "${DDEV_CONFIG_DIR}commands/.common/settings.sh"
+source "${DDEV_CONFIG_DIR}commands/.common/paths.sh"
+source "${DDEV_CONFIG_DIR}commands/.common/commands.sh"
+source "${DDEV_CONFIG_DIR}commands/.common/functions.sh"
+
+# =============================================================================
+# MAIN
+# =============================================================================
+dump_remote_db
+copy_remote_db_files_to_local

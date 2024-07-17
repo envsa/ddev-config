@@ -1,4 +1,5 @@
 #ddev-generated
 *
+!example
 !.gitignore
-!README.md
+!README.txt

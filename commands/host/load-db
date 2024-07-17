@@ -1,0 +1,162 @@
+#!/bin/bash
+#ddev-generated
+
+## Description: dump mysql database on remote system table by table into /storage/db-swap-cache/
+## Usage: load-db [options, call without params for help] ‹target/source›
+
+
+# =============================================================================
+# FUNCTIONS
+# =============================================================================
+function usage() {
+  # Set colors for section titles and targets
+  sectionColor="${CLR_GRN}"
+  targetColor="${CLR_YEL}"
+
+  # Files to ignore
+  ignore_files=("README.txt" ".gitignore" "example")
+
+  # Build the find command
+  find_cmd="find \"${TARGET_DIR}\" -type f"
+
+  # Add ignored files to find command
+  for file in "${ignore_files[@]}"; do
+    find_cmd+=" -not -name ${file}"
+  done
+
+  # Add -print0 to the find command
+  find_cmd+=" -print0"
+
+  # Usage section
+  printf "${sectionColor}Usage:${CLR_END}\n"
+  printf "\tddev load-db [options] ‹target/source›\n"
+  printf "\n" # Add a line between sections
+
+  # Targets/Sources section
+  printf "${sectionColor}Targets/Sources:${CLR_END}\n"
+  printf "\t· ${targetColor}%s${CLR_END}\n" "ddev (the local ddev database)"
+
+  if [ -n "${TARGET_DIR}" ]; then
+    eval ${find_cmd} | while IFS= read -r -d '' _i; do
+      printf "\t· ${targetColor}%s${CLR_END}\n" "$(basename "$_i")"
+    done
+  else
+    printf "\t${targetColor}No target directory specified${CLR_END}\n"
+  fi
+
+  printf "\n" # Add a line between sections
+
+  # Options section
+  printf "${sectionColor}Options:${CLR_END}\n"
+  printf "\t%-15s %s\n" "-f|--force" "Get a fresh copy of the db from the remote target"
+  printf "\t%-15s %s\n" "-s|--skip-hooks" "Skip pre and post load db hooks"
+  printf "\t%-15s %s\n" "-v|--verbose" "Echo all executed commands"
+  printf "\n" # Add a line at the end
+}
+
+function parseArgs() {
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -f|--force)
+        isForce=1
+        shift
+        ;;
+      -s|--skip-hooks)
+        skipHooks=1
+        shift
+        ;;
+      -v|--verbose)
+        isVerbose=1
+        shift
+        ;;
+      *)
+        if [[ -z "$targetName" ]]; then
+          targetName="$1"
+        else
+          errorMessage "Unknown option or multiple targets provided: $1"
+          usage
+          exit 4
+        fi
+        shift
+        ;;
+    esac
+  done
+
+  if [[ -z "$targetName" ]]; then
+    errorMessage "Target name is required.\n"
+    usage
+    exit 3
+  fi
+
+  if ! [[ -f "$TARGET_DIR$targetName" ]]; then
+    errorMessage "Target \"$targetName\" does not exist.\n"
+    usage
+    exit 3
+  fi
+}
+
+# =============================================================================
+# INIT
+# =============================================================================
+
+# set colours and some high level paths etc
+DDEV_PROJECT_DIR="${DDEV_APPROOT}/"
+DDEV_CONFIG_DIR="${DDEV_APPROOT}/.ddev/"
+
+source "${DDEV_CONFIG_DIR}commands/.common/init.sh"
+
+# set default args
+isForce=0
+isVerbose=0
+skipHooks=0
+targetName=
+
+# parse args from command
+parseArgs "$@"
+
+# these files rely on the target being set so we delay them being included
+source "${DDEV_CONFIG_DIR}commands/.common/settings.sh"
+source "${DDEV_CONFIG_DIR}commands/.common/paths.sh"
+source "${DDEV_CONFIG_DIR}commands/.common/commands.sh"
+source "${DDEV_CONFIG_DIR}commands/.common/functions.sh"
+
+# =============================================================================
+# MAIN
+# =============================================================================
+function importFromCache() {
+  local skipHooksFlag=""
+
+  if [[ "${skipHooks}" = 1 ]]; then
+    skipHooksFlag=" --skip-hooks"
+  fi
+
+  if ! [[ -d "${LOCAL_SWAP_CACHE_DIR}" ]] ; then
+    infoMessage "Local swap cache dir does not exist, pulling from remote"
+    pullFromRemote
+  fi
+
+  local importCommand="cat $LOCAL_SWAP_CACHE_DIR*.sql | ddev import-db $skipHooksFlag"
+
+  if [[ "${isVerbose}" = 1 ]]; then
+    echo -e "${importCommand}"
+  fi
+
+  infoMessageCountdown "Importing database from cache in" 3
+
+  eval "${importCommand}"
+
+  exit 0
+}
+
+function pullFromRemote() {
+  ddev dump-db ${targetName}
+}
+
+# handle force condition
+if [[ "${isForce}" = 1 ]] ; then
+  pullFromRemote
+  importFromCache
+fi
+
+importFromCache
