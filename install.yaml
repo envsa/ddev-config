@@ -66,7 +66,7 @@ project_files:
 # - extra_files_dir_created_by_this_template/
 # - somefile.sh
 - apache/
-- commands/web/
+- commands/
 - web-build/
 - docker-compose.vite.yaml
 - config.hooks.yaml
