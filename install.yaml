@@ -65,9 +65,14 @@ project_files:
 # - some-directory/file2.txt
 # - extra_files_dir_created_by_this_template/
 # - somefile.sh
-- apache/
-- commands/
-- web-build/
+- apache/apache-envsa.conf
+- apache/apache-site.conf
+- commands/.common/
+- commands/.targets/
+- commands/web/dump-db
+- commands/host/load-db
+- web-build/Dockerfile.imagemagick
+- web-build/Dockerfile.playwright
 - docker-compose.vite.yaml
 - config.hooks.yaml
 
