@@ -1,0 +1,10 @@
+#ddev-generated
+#!/bin/bash
+
+target=(
+  [sshUser]=REPLACE_ME
+  [sshHost]=REPLACE_ME
+  [sshPort]=REPLACE_ME
+  # no trailing slash.
+  [sshPath]=REPLACE_ME
+)
