@@ -74,6 +74,7 @@ project_files:
   - providers/production.yaml
   - providers/staging.yaml
   - targets/
+  - commands/
 
 # List of files and directories that are copied into the global .ddev directory
 # DDEV environment variables can be interpolated into these filenames

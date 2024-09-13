@@ -5,5 +5,5 @@ hooks:
     - exec: composer install
   post-start:
     - exec: composer install
-    - exec: npm install
-    - exec: npm run build
+    - exec: pnpm install
+    - exec: pnpm build

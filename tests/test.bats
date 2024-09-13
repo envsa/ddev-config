@@ -20,6 +20,7 @@ health_checks() {
   # Check that image magick has the correct resource allocation [❌]
   # Check that playwright's dependencies have been installed [❌]
   # Check that each command provides it's default output [❌]
+  ddev pnpm --version
 }
 
 teardown() {
