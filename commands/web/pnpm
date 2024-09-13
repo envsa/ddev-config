@@ -1,0 +1,10 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: Run pnpm command in the web contianer
+## Usage: pnpm [command] [flags]
+## Example: ddev pnpm add -D @envsa/shared-config
+## ExecRaw: true
+## HostWorkingDir: true
+
+pnpm "$@"
