@@ -69,6 +69,7 @@ project_files:
   - apache/apache-site.conf
   - web-build/Dockerfile.imagemagick
   - web-build/Dockerfile.playwright
+  - web-build/Dockerfile.pnpm
   - docker-compose.vite.yaml
   - config.hooks.yaml
   - providers/production.yaml
