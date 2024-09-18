@@ -1,0 +1,24 @@
+#ddev-generated
+# =========================================
+# update resource allocation of imagemagick
+# =========================================
+RUN sudo sed -i 's/<policy domain="resource" name="disk" value="1GiB"\/>/<policy domain="resource" name="disk" value="8GiB"\/>/g' /etc/ImageMagick-6/policy.xml
+
+# =========================================
+# install pnpm
+# =========================================
+RUN npm install --global pnpm
+
+# =========================================
+# install playwright deps
+# =========================================
+# switch to current user so playwright installs files in the right place
+USER $username
+
+# files will be output in /home/${username}/.cache
+RUN pnpm exec playwright install chromium --with-deps
+
+# switch back to root user so ddev can continue with standard installation
+USER root
+
+

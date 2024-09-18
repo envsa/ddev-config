@@ -67,9 +67,7 @@ project_files:
   # - somefile.sh
   - apache/apache-envsa.conf
   - apache/apache-site.conf
-  - web-build/Dockerfile.imagemagick
-  - web-build/Dockerfile.playwright
-  - web-build/Dockerfile.pnpm
+  - web-build/Dockerfile.envsa
   - docker-compose.vite.yaml
   - config.hooks.yaml
   - providers/production.yaml
@@ -92,6 +90,7 @@ post_install_actions:
 # - chmod +x ~/.ddev/commands/web/somecommand
 # - touch somefile.${GOOS}.${DDEV_WEBSERVER}
 # - perl -pi -e 's/oldstring/newstring/g' docker-compose.addon-template.yaml
+  - rm -f ./.ddev/web-build/Dockerfile.{pnpm,imagemagick,playwright}
 
 # Shell actions that can be done during removal of the add-on
 removal_actions:
