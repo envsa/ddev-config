@@ -16,7 +16,7 @@ RUN npm install --global pnpm
 USER $username
 
 # files will be output in /home/${username}/.cache
-RUN pnpm exec playwright install chromium --with-deps
+RUN npx playwright install --with-deps chromium
 
 # switch back to root user so ddev can continue with standard installation
 USER root
