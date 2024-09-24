@@ -90,7 +90,6 @@ post_install_actions:
 # - chmod +x ~/.ddev/commands/web/somecommand
 # - touch somefile.${GOOS}.${DDEV_WEBSERVER}
 # - perl -pi -e 's/oldstring/newstring/g' docker-compose.addon-template.yaml
-  - rm -f ./.ddev/web-build/Dockerfile.{pnpm,imagemagick,playwright}
 
 # Shell actions that can be done during removal of the add-on
 removal_actions:

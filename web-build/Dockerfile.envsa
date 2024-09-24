@@ -1,4 +1,11 @@
 #ddev-generated
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+# =========================================
+# enable serverside includes in apache
+# =========================================
+RUN a2enmod include
+
 # =========================================
 # update resource allocation of imagemagick
 # =========================================
