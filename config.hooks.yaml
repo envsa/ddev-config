@@ -4,6 +4,4 @@ hooks:
   post-import-db:
     - exec: composer install
   post-start:
-    - exec: composer install
-    - exec: pnpm install
-    - exec: pnpm build
+    - exec-host: ddev init-craft
