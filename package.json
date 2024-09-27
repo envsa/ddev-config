@@ -1,0 +1,17 @@
+{
+  "name": "ddev-config",
+  "version": "1.2.7",
+  "description": "",
+  "scripts": {
+    "release": "pnpm bumpp --commit 'release: %s' --tag '%s'"
+  },
+  "author": {
+    "name": "Liam Rella",
+    "email": "DEW.ICTWebsSrvices@sa.gov.au",
+    "url": "https://github.com/envsa"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "bumpp": "^9.5.2"
+  }
+}
