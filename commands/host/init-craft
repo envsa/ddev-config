@@ -9,7 +9,7 @@
 
 # Check to see if we need to seed the db
 if ddev craft install/check; then
-  composer install
+  ddev composer install
 else
   echo "Craft not installed, importing seed db..."
   # post import-db hook will automatically run composer install
