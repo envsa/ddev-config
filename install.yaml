@@ -70,8 +70,7 @@ project_files:
   - web-build/Dockerfile.envsa
   - docker-compose.vite.yaml
   - config.hooks.yaml
-  - providers/production.yaml
-  - providers/staging.yaml
+  - providers/envsa.yaml
   - targets/
   - commands/
 

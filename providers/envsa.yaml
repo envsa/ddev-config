@@ -1,8 +1,5 @@
 #ddev-generated
 # Docs: https://ddev.readthedocs.io/en/latest/users/providers/
-environment_variables:
-  environmentName: production
-
 auth_command:
   command: |
     set -eu -o pipefail
@@ -15,8 +12,8 @@ db_pull_command:
 
     declare -A target
 
-    if ! . "./.ddev/targets/${environmentName}" 2>/dev/null; then
-      echo "ERROR: Target ‹$environmentName› not found."
+    if ! . "./.ddev/targets/${target}" 2>/dev/null; then
+      echo "ERROR: Target ‹$target› not found."
       exit 1
     fi
 
@@ -46,3 +43,4 @@ db_pull_command:
     mv ".ddev/.downloads/db-backup-pull-${backupid}.sql" .ddev/.downloads/db.sql
     gzip -9 .ddev/.downloads/db.sql
   service: web
+
