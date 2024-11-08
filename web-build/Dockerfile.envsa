@@ -12,9 +12,10 @@ RUN a2enmod include
 RUN sudo sed -i 's/<policy domain="resource" name="disk" value="1GiB"\/>/<policy domain="resource" name="disk" value="8GiB"\/>/g' /etc/ImageMagick-6/policy.xml
 
 # =========================================
-# install pnpm
+# install svgo for image optimize
 # =========================================
-RUN npm install --global pnpm
+RUN sudo npm install -g svgo
+RUN sudo ln -s /usr/local/bin/svgo /usr/bin/svgo
 
 # =========================================
 # install playwright deps
@@ -27,5 +28,3 @@ RUN npx playwright install --with-deps chromium
 
 # switch back to root user so ddev can continue with standard installation
 USER root
-
-

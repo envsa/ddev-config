@@ -1,7 +1,0 @@
-#ddev-generated
-override_config: false
-hooks:
-  post-import-db:
-    - exec: composer install
-  post-start:
-    - exec-host: ddev init-craft

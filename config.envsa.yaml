@@ -1,0 +1,17 @@
+#ddev-generated
+override_config: true
+corepack_enable: true
+disable_settings_management: true
+web_environment:
+  - DDEV_VITE_PORT=3000
+web_extra_exposed_ports:
+  - name: vite
+    container_port: 3000
+    http_port: 3001
+    https_port: 3000
+webimage_extra_packages: [jpegoptim optipng gifsicle webp]
+hooks:
+  post-import-db:
+    - composer: install
+  post-start:
+    - exec-host: ddev init-craft

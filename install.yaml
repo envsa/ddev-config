@@ -68,8 +68,7 @@ project_files:
   - apache/apache-envsa.conf
   - apache/apache-site.conf
   - web-build/Dockerfile.envsa
-  - docker-compose.vite.yaml
-  - config.hooks.yaml
+  - config.envsa.yaml
   - providers/envsa.yaml
   - targets/
   - commands/
