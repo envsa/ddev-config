@@ -15,7 +15,7 @@ RUN sudo sed -i 's/<policy domain="resource" name="disk" value="1GiB"\/>/<policy
 # install svgo for image optimize
 # =========================================
 RUN sudo npm install -g svgo
-RUN sudo ln -s /usr/local/bin/svgo /usr/bin/svgo
+RUN sudo ln -sf /usr/local/bin/svgo /usr/bin/svgo
 
 # =========================================
 # install playwright deps
