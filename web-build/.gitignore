@@ -1,0 +1,8 @@
+#ddev-generated
+# This directory contains a copy of package.json, pnpm-lock.yaml and playwright.config.js.
+# So that we can reinstall playwright dependencies on each build.
+playwright
+
+# This file is optionally copied to enable playwright from
+# disabled.Dockerfile.playwright.
+Dockerfile.playwright

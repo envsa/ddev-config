@@ -1,0 +1,6 @@
+#!/bin/bash
+#ddev-generated
+
+# we use a custom command here so that we can launch the UI on the host, then run playwright in the container
+PORT=$(ddev exec env | grep DDEV_KASMVNC_PORT | awk -F '=' '{print $2}')
+ddev launch ":${PORT:-8444}" && ddev pnpm test:ui

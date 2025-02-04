@@ -4,15 +4,47 @@ corepack_enable: true
 disable_settings_management: true
 web_environment:
   - DDEV_VITE_PORT=3000
+  - DDEV_PLAYWRIGHT_PORT=9323
+  - DDEV_KASMVNC_PORT=8444
+  - DISPLAY=:1
 web_extra_exposed_ports:
   - name: vite
     container_port: 3000
     http_port: 3001
     https_port: 3000
+  - name: playwright
+    container_port: 9323
+    http_port: 8323
+    https_port: 9324
+  - name: kasmvnc
+    container_port: 8444
+    http_port: 8443
+    https_port: 8444
+web_extra_daemons:
+  - name: "kasmvnc"
+    command: "kasmvncserver -fg || sleep infinity" # We add the sleep so this doesn't error out when not using playwright.
+    directory: /var/www/html
 webimage_extra_packages: [jpegoptim optipng gifsicle webp]
 hooks:
+  pre-start:
+    # If Playwright is enabled, make sure we get any changes.
+    - exec-host: /
+        ([[ -f .ddev/web-build/Dockerfile.playwright]] && \
+          cp .ddev/web-build/disabled.Dockerfile.playwright .ddev/web-build/Dockerfile.playwright) || true
+    - exec-host: |
+        if [[ -f .ddev/web-build/Dockerfile.playwright ]]
+        then
+          rm -rf .ddev/web-build/playwright
+          mkdir -p .ddev/web-build/playwright
+          cp -r {package.json,pnpm-lock.yaml,playwright.config.js} .ddev/web-build/playwright
+        fi
   post-import-db:
     - composer: install
   post-start:
+    # Clean up the playwright directory copied for builds.
+    # We want to remove this otherwise future ddev get's will not copy in
+    # changes to the web-build directory.
+    - exec-host: rm -rf .ddev/web-build/playwright
     - exec: export CWD=`pwd` && git config --global --add safe.directory $CWD
     - exec-host: ddev init-craft
+  
