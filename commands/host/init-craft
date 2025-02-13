@@ -7,6 +7,12 @@
 ## ExecRaw: true
 ## HostWorkingDir: true
 
+# check to see if DDEV_NONINTERACTIVE=true exit early
+if [ "$DDEV_NONINTERACTIVE" = "true" ]; then
+  echo "Not trying to init Craft because DDEV_NONINTERACTIVE=true"
+  exit 0
+fi
+
 # Check to see if we need to seed the db
 if ddev craft install/check; then
   ddev composer install

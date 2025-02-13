@@ -1,0 +1,25 @@
+#!/bin/bash
+#ddev-generated
+
+if [ ! -f package.json ]; then
+  echo "No package.json found."
+  # https://github.com/microsoft/playwright/issues/11843
+  echo "Playwright does not support a non-interactive setup and must be done manually."
+  echo ""
+  echo "Run the following:"
+  echo   ddev pnpm init playwright@latest
+  echo ""
+  echo "Answer "no" when it asks to install browsers and operating system dependencies,"
+  echo "as those will be erased when ddev restarts."
+  echo ""
+  echo "See https://playwright.dev/docs/intro for more details."
+  echo ""
+  echo "When done, run: ddev install-playwright"
+  exit 1
+fi
+
+# ddev errors out on subsequent builds if we symlink these files. Instead, we
+# copy them each time.
+echo "Rebuilding web service with playwright dependencies..."
+cp .ddev/web-build/disabled.Dockerfile.playwright .ddev/web-build/Dockerfile.playwright
+ddev restart

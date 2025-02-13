@@ -16,15 +16,3 @@ RUN sudo sed -i 's/<policy domain="resource" name="disk" value="1GiB"\/>/<policy
 # =========================================
 RUN sudo npm install -g svgo
 RUN sudo ln -sf /usr/local/bin/svgo /usr/bin/svgo
-
-# =========================================
-# install playwright deps
-# =========================================
-# switch to current user so playwright installs files in the right place
-USER $username
-
-# files will be output in /home/${username}/.cache
-RUN npx playwright@^1.0.0 install --with-deps chromium
-
-# switch back to root user so ddev can continue with standard installation
-USER root
