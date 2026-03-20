@@ -28,15 +28,17 @@ webimage_extra_packages: [jpegoptim optipng gifsicle webp]
 hooks:
   pre-start:
     # If Playwright is enabled, make sure we get any changes.
-    - exec-host: /
-        ([[ -f .ddev/web-build/Dockerfile.playwright]] && \
+    - exec-host: |
+        ([[ -f .ddev/web-build/Dockerfile.playwright ]] && \
           cp .ddev/web-build/disabled.Dockerfile.playwright .ddev/web-build/Dockerfile.playwright) || true
     - exec-host: |
         if [[ -f .ddev/web-build/Dockerfile.playwright ]]
         then
           rm -rf .ddev/web-build/playwright
           mkdir -p .ddev/web-build/playwright
-          cp -r {package.json,pnpm-lock.yaml,playwright.config.js} .ddev/web-build/playwright
+          config=$(ls playwright.config.{js,ts} 2>/dev/null | head -n1 || true)
+          [[ -n "$config" ]] && cp "$config" .ddev/web-build/playwright/
+          cp -r {package.json,pnpm-lock.yaml} .ddev/web-build/playwright
         fi
   post-import-db:
     - composer: install
@@ -47,4 +49,3 @@ hooks:
     - exec-host: rm -rf .ddev/web-build/playwright
     - exec: export CWD=`pwd` && git config --global --add safe.directory $CWD
     - exec-host: ddev init-craft
-  
