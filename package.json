@@ -3,7 +3,8 @@
   "version": "1.5.4",
   "description": "",
   "scripts": {
-    "release": "pnpm bumpp"
+    "release": "pnpm bumpp",
+    "add-on-update-checker": "curl -fsSL https://ddev.com/s/addon-update-checker.sh | bash"
   },
   "author": {
     "name": "Liam Rella",

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #ddev-generated
 
 # we use a custom command here so that we can launch the UI on the host, then run playwright in the container

@@ -1,6 +1,6 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 ## #ddev-generated
+
 ## Description: Initialize craft with seed db
 ## Usage: init-craft
 ## Example: ddev init-craft

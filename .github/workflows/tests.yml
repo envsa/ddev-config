@@ -1,8 +1,12 @@
 name: tests
 on:
   pull_request:
+    paths-ignore:
+      - "**.md"
   push:
     branches: [main]
+    paths-ignore:
+      - "**.md"
 
   schedule:
     - cron: "25 08 * * *"
@@ -15,6 +19,13 @@ on:
         required: false
         default: false
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   tests:
     strategy:
@@ -22,13 +33,13 @@ jobs:
         ddev_version: [stable, HEAD]
       fail-fast: false
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: ddev/github-action-add-on-test@ce27c56d7bea44342a704c26824a147b3f148732 # v2
+      - uses: ddev/github-action-add-on-test@v2
         with:
           ddev_version: ${{ matrix.ddev_version }}
-          addon_repository: ${{ github.repository }}
-          addon_ref: ${{ github.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          debug_enabled: ${{ github.event.inputs.debug_enabled || false }}
+          debug_enabled: ${{ github.event.inputs.debug_enabled }}
+          addon_repository: ${{ env.GITHUB_REPOSITORY }}
+          addon_ref: ${{ env.GITHUB_REF }}
