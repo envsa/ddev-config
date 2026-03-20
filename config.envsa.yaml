@@ -44,7 +44,7 @@ hooks:
     - composer: install
   post-start:
     # Clean up the playwright directory copied for builds.
-    # We want to remove this otherwise future ddev get's will not copy in
+    # We want to remove this otherwise future ddev add-on get's will not copy in
     # changes to the web-build directory.
     - exec-host: rm -rf .ddev/web-build/playwright
     - exec: export CWD=`pwd` && git config --global --add safe.directory $CWD
