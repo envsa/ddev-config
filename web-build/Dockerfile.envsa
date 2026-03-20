@@ -7,11 +7,6 @@ FROM $BASE_IMAGE
 RUN a2enmod include
 
 # =========================================
-# update resource allocation of imagemagick
-# =========================================
-RUN sudo sed -i 's/<policy domain="resource" name="disk" value="1GiB"\/>/<policy domain="resource" name="disk" value="8GiB"\/>/g' /etc/ImageMagick-6/policy.xml
-
-# =========================================
 # install svgo for image optimize
 # =========================================
 RUN sudo npm install -g svgo
