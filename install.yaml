@@ -14,6 +14,7 @@ project_files:
   - web-build/Dockerfile.task
   - web-build/install-task.sh
   - web-build/install-kasmvnc.sh
+  - web-build/kasmvnc.yaml
   - web-build/xstartup
 
   - config.envsa.yaml
