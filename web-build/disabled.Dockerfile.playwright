@@ -34,15 +34,15 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   && cp -a /playwright/* /var/www/html/tmp-playwright \
   && chown -R $username:$username /var/www/html/tmp-playwright \
   && chown -R $username:$username /dot-cache \
-  && sudo -u $username ln -s /dot-cache /home/$username/.cache \
+  && sudo -u $username ln -s /dot-cache /home/$username/.cache/ms-playwright \
   && cd /var/www/html/tmp-playwright \
   && sudo -u $username pnpm install \
   && sudo -u $username pnpm exec playwright install-deps \
-  && sudo -u $username pnpm exec playwright install \
+  && sudo -u $username PLAYWRIGHT_SKIP_BROWSER_GC=1 pnpm exec playwright install \
   && rm -rf /var/www/html/tmp-playwright \
   && rm -rf /home/$username/.cache \
-  && sudo -u $username mkdir -p /home/$username/.cache \
-  && sudo -u $username cp -a /dot-cache/* /home/$username/.cache/
+  && sudo -u $username mkdir -p /home/$username/.cache/ms-playwright \
+  && sudo -u $username cp -a /dot-cache/* /home/$username/.cache/ms-playwright/
 
 # Install a window manager.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
